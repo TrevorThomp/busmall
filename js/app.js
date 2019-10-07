@@ -18,14 +18,10 @@ var Product = function(name, imgUrl) {
   this.clicks = 0;
   Product.allImages.push(this);
 };
+Product.allImages= [];
 
-
-Product.allImages = [];
-
-console.log(Product.allImages);
-
+// Prototype array to hold clicked items
 Product.prototype.imagesConsidered = [];
-
 
 // Create an algorithm that will randomly generate three unique product images from the images directory and display them side-by-side-by-side in the browser window.
 var renderNewImages = function(leftIndex, rightIndex, middleIndex){
@@ -34,6 +30,7 @@ var renderNewImages = function(leftIndex, rightIndex, middleIndex){
   middleImageTag.src = Product.allImages[middleIndex].imgURL;
 };
 
+// Generate 3 random images that can't be the same
 var pickNewImages = function(){
   var leftIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
 
@@ -51,7 +48,6 @@ var pickNewImages = function(){
 
 // Number of rounds allowed for user
 var numberOfRounds = 25;
-
 
 // Attach an event listener to the section of the HTML page where the images are going to be displayed.
 var handleClickOnImg = function(event){
@@ -92,10 +88,7 @@ var handleClickOnImg = function(event){
 
 imageSectionTag.addEventListener('click', handleClickOnImg);
 
-// Create a prototype property attached to the product object that keeps track of all the products that are currently being considered.
-
-// Display the list of all the products followed by the votes received and number of times seen for each. Example: Banana Slicer had 3 votes
-
+// Images to be displayed
 new Product('bag', './img/bag.jpg');
 new Product('banana', './img/banana.jpg');
 new Product('bathroom', './img/bathroom.jpg');
@@ -119,16 +112,34 @@ new Product('wine-glass', './img/wine-glass.jpg');
 
 pickNewImages();
 
-
+// Generates results to body
 function displayResults() {
-  var body = document.getElementById('results');
+  var main = document.getElementById('results');
   var div = document.createElement('div');
   var ul = document.createElement('ul');
   for (var i = 0; i < Product.allImages.length; i++) {
-    var li = document.createElement('li')
-    li.textContent = `${Product.prototype.imagesConsidered[i].name} has ${Product.prototype.imagesConsidered[i].clicks} votes and was shown ${Product.prototype.imagesConsidered[i].timesShown} times.`;
+    var li = document.createElement('li');
+    li.textContent = `${Product.allImages[i].name} has ${Product.allImages[i].clicks} votes and was shown ${Product.allImages[i].timesShown} times.`;
     ul.appendChild(li);
   }
   div.appendChild(ul);
-  body.appendChild(div);
+  main.appendChild(div);
 }
+
+
+
+// Random Number of Images 
+
+// var numberOfImages = Math.floor(Math.random() * 5) + 1;
+
+// function appendImages() {
+//   var randomIndex = Math.floor(Math.random() * 20) + 1;
+//   for (var i = 0; i < numberOfImages; i++) {
+//     var randomImages = Product.allImages[randomIndex].imgURL;
+//     var stretch = document.getElementById('stretch');
+//     var img = document.createElement('img');
+//     img.setAttribute('src', randomImages);
+//     stretch.appendChild(img);
+//   }}
+
+// appendImages();

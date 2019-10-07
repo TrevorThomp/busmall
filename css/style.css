@@ -4,9 +4,25 @@ img {
   border: 1px solid slategrey;
 }
 
+ul {
+  border-radius: 10px;
+  border: 1px solid black;
+  padding: 30px;
+}
+
+li {
+  text-transform: capitalize;
+  padding: 3px;
+}
+
 #imageContainer {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  margin-top: 250px;
+  margin-top: 150px;
+}
+
+#results {
+  display: flex;
+  justify-content: center;
 }
