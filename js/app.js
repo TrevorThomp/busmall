@@ -1,8 +1,15 @@
+'use strict';
 // As a user, I would like to display three unique products by chance so that the viewers can pick a favorite.
 
 // Create a constructor function that creates an object associated with each product, and has the following properties:
 // Name of the product
 // File path of image
+var NewImage = function(name, imgUrl) {
+  this.name = name;
+  this.imgUrl = imgUrl;
+};
+
+
 
 
 // Create an algorithm that will randomly generate three unique product images from the images directory and display them side-by-side-by-side in the browser window.
