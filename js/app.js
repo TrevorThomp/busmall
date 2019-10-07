@@ -56,14 +56,12 @@ var pickNewImages = function(){
 var handleClickOnImg = function(event){
   console.log('i am alive');
 
-  if(totalClicks < 10) {
+  if(totalClicks < 26) {
     var clickedImage = event.target;
     var id = clickedImage.id;
 
     if(id === 'left_image' || id === 'right_image' || id === 'middle_image'){
-      //track the images
-      //increment th image in the left_image slot's click
-      //if image is right, increment right
+
       if (id === 'left_image'){
         leftImgOnThePage.clicks++;
       }
@@ -77,24 +75,18 @@ var handleClickOnImg = function(event){
       leftImgOnThePage.timesShown++;
       rightImgOnThePage.timesShown++;
       middleImgOnThePage.timesShown++;
-  
+
       pickNewImages();
     }
   }
   totalClicks ++;
-  if(totalClicks === 9) {
+  if(totalClicks === 25) {
     imageSectionTag.removeEventListener('click', handleClickOnImg);
-    console.log('you have seen 20 images, thanks!');
+    console.log('you have been through 25 rounds of images, thanks!');
   }
 };
 
 imageSectionTag.addEventListener('click', handleClickOnImg);
-// Once the users ‘clicks’ a product, generate three new products for the user to pick from.
-
-// As a user, I would like to track the selections made by viewers so that I can determine which products to keep for the catalog.
-// Add onto your constructor function a property to hold the number of times a product has been clicked.
-
-// After every selection by the viewer, update the newly added property to reflect if it was clicked.
 
 // As a user, I would like to control the number of rounds a user is presented with so that I can control the voting session duration.
 // By default, the user should be presented with 25 rounds of voting before ending the session.
