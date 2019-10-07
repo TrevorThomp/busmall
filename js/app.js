@@ -18,6 +18,8 @@ var middleImgOnThePage = null;
 var NewImage = function(name, imgUrl) {
   this.name = name;
   this.imgURL = imgUrl;
+  this.clicks = 0;
+  this.timesShown = 0;
 
   NewImage.allImages.push(this);
 };
