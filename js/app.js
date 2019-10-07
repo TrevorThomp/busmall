@@ -1,21 +1,91 @@
 'use strict';
 // As a user, I would like to display three unique products by chance so that the viewers can pick a favorite.
 
+// Global Variables
+var imageSectionTag = document.getElementById('imageContainer');
+var leftImageTag = document.getElementById('left_image');
+var middleImageTag = document.getElementById('middle_image');
+var rightImageTag = document.getElementById('right_image');
+var totalClicks = 0;
+
+var rightImgOnThePage = null;
+var leftImgOnThePage = null;
+var middleImgOnThePage = null;
+
 // Create a constructor function that creates an object associated with each product, and has the following properties:
 // Name of the product
 // File path of image
 var NewImage = function(name, imgUrl) {
   this.name = name;
-  this.imgUrl = imgUrl;
+  this.imgURL = imgUrl;
+
+  NewImage.allImages.push(this);
+};
+
+NewImage.allImages = [];
+
+// Create an algorithm that will randomly generate three unique product images from the images directory and display them side-by-side-by-side in the browser window.
+var renderNewImages = function(leftIndex, rightIndex, middleIndex){
+  leftImageTag.src = NewImage.allImages[leftIndex].imgURL;
+  rightImageTag.src = NewImage.allImages[rightIndex].imgURL;
+  middleImageTag.src = NewImage.allImages[middleIndex].imgURL;
+};
+
+var pickNewImages = function(){
+  //pick a new image...
+  console.log('pick a new image');
+
+  var leftIndex = Math.ceil(Math.random() * NewImage.allImages.length - 1);
+
+  do {
+    var rightIndex = Math.ceil(Math.random() * NewImage.allImages.length - 1);
+    var middleIndex = Math.ceil(Math.random() * NewImage.allImages.length - 1);
+  } while(rightIndex === leftIndex && middleIndex === rightIndex && middleIndex === leftIndex);
+
+  leftImgOnThePage = NewImage.allImages[leftIndex];
+  rightImgOnThePage = NewImage.allImages[rightIndex];
+  middleImgOnThePage = NewImage.allImages[middleIndex];
+
+  renderNewImages(leftIndex, rightIndex, middleIndex);
 };
 
 
-
-
-// Create an algorithm that will randomly generate three unique product images from the images directory and display them side-by-side-by-side in the browser window.
-
 // Attach an event listener to the section of the HTML page where the images are going to be displayed.
+var handleClickOnImg = function(event){
+  console.log('i am alive');
 
+  if(totalClicks < 10) {
+    var thingWeClickedOn = event.target;
+    var id = thingWeClickedOn.id;
+
+    if(id === 'left_image' || id === 'right_image'){
+      //track the images
+      //increment th image in the left_image slot's click
+      //if image is right, increment right
+      if (id === 'left_image'){
+        leftImgOnThePage.clicks++;
+      }
+      if (id === 'middle_image') {
+        middleImgOnThePage.clicks++;
+      }
+
+      if (id === 'right_image'){
+        rightImgOnThePage.clicks ++;
+      }
+      leftImgOnThePage.timesShown ++;
+      rightImgOnThePage.timesShown ++;
+  
+      pickNewImages();
+    }
+  }
+  totalClicks ++;
+  if(totalClicks === 9) {
+    imageSectionTag.removeEventListener('click', handleClickOnImg);
+    console.log('you have seen 20 images, thanks!');
+  }
+
+
+};
 // Once the users ‘clicks’ a product, generate three new products for the user to pick from.
 // As a user, I would like to track the selections made by viewers so that I can determine which products to keep for the catalog.
 // Add onto your constructor function a property to hold the number of times a product has been clicked.
@@ -31,3 +101,30 @@ var NewImage = function(name, imgUrl) {
 // After voting rounds have been completed, remove the event listeners on the product.
 
 // Display the list of all the products followed by the votes received and number of times seen for each. Example: Banana Slicer had 3 votes
+
+new NewImage('bag', './img/bag.jpg');
+new NewImage('banana', './img/banana.jpg');
+new NewImage('bathroom', './img/bathroom.jpg');
+new NewImage('boots', './img/boots.jpg');
+new NewImage('breakfast', './img/breakfast.jpg');
+new NewImage('bubblegum', './img/bubblegum.jpg');
+new NewImage('chair', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+new NewImage('bag', './img/bag.jpg');
+
+pickNewImages();

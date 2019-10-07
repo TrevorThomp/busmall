@@ -1,0 +1,12 @@
+img {
+  width: 25%;
+  border-radius: 8px;
+  border: 1px solid slategrey;
+}
+
+#imageContainer {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 250px;
+}
