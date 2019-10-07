@@ -55,10 +55,10 @@ var handleClickOnImg = function(event){
   console.log('i am alive');
 
   if(totalClicks < 10) {
-    var thingWeClickedOn = event.target;
-    var id = thingWeClickedOn.id;
+    var clickedImage = event.target;
+    var id = clickedImage.id;
 
-    if(id === 'left_image' || id === 'right_image'){
+    if(id === 'left_image' || id === 'right_image' || id === 'middle_image'){
       //track the images
       //increment th image in the left_image slot's click
       //if image is right, increment right
@@ -70,10 +70,11 @@ var handleClickOnImg = function(event){
       }
 
       if (id === 'right_image'){
-        rightImgOnThePage.clicks ++;
+        rightImgOnThePage.clicks++;
       }
-      leftImgOnThePage.timesShown ++;
-      rightImgOnThePage.timesShown ++;
+      leftImgOnThePage.timesShown++;
+      rightImgOnThePage.timesShown++;
+      middleImgOnThePage.timesShown++;
   
       pickNewImages();
     }
@@ -83,10 +84,11 @@ var handleClickOnImg = function(event){
     imageSectionTag.removeEventListener('click', handleClickOnImg);
     console.log('you have seen 20 images, thanks!');
   }
-
-
 };
+
+imageSectionTag.addEventListener('click', handleClickOnImg);
 // Once the users ‘clicks’ a product, generate three new products for the user to pick from.
+
 // As a user, I would like to track the selections made by viewers so that I can determine which products to keep for the catalog.
 // Add onto your constructor function a property to hold the number of times a product has been clicked.
 
