@@ -9,22 +9,22 @@ var totalClicks = 0;
 var rightImgOnThePage = null;
 var leftImgOnThePage = null;
 var middleImgOnThePage = null;
-var voted = [];
 
 
 var Product = function(name, imgUrl) {
   this.name = name;
   this.imgURL = imgUrl;
   this.timesShown = 0;
-
+  this.clicks = 0;
   Product.allImages.push(this);
 };
+
 
 Product.allImages = [];
 
 console.log(Product.allImages);
 
-Product.prototype.clicks = 0;
+Product.prototype.imagesConsidered = [];
 
 
 // Create an algorithm that will randomly generate three unique product images from the images directory and display them side-by-side-by-side in the browser window.
@@ -64,13 +64,16 @@ var handleClickOnImg = function(event){
 
       if (id === 'left_image'){
         leftImgOnThePage.clicks++;
+        Product.prototype.imagesConsidered.push(leftImgOnThePage);
       }
       if (id === 'middle_image') {
         middleImgOnThePage.clicks++;
+        Product.prototype.imagesConsidered.push(leftImgOnThePage);
       }
 
       if (id === 'right_image'){
         rightImgOnThePage.clicks++;
+        Product.prototype.imagesConsidered.push(leftImgOnThePage);
       }
       leftImgOnThePage.timesShown++;
       rightImgOnThePage.timesShown++;
@@ -82,6 +85,7 @@ var handleClickOnImg = function(event){
   totalClicks++;
   if(totalClicks === numberOfRounds) {
     imageSectionTag.removeEventListener('click', handleClickOnImg);
+    displayResults();
     console.log('you have been through 25 rounds of images, thanks!');
   }
 };
@@ -114,3 +118,17 @@ new Product('water-can', './img/water-can.jpg');
 new Product('wine-glass', './img/wine-glass.jpg');
 
 pickNewImages();
+
+
+function displayResults() {
+  var body = document.getElementById('results');
+  var div = document.createElement('div');
+  var ul = document.createElement('ul');
+  for (var i = 0; i < Product.allImages.length; i++) {
+    var li = document.createElement('li')
+    li.textContent = `${Product.prototype.imagesConsidered[i].name} has ${Product.prototype.imagesConsidered[i].clicks} votes and was shown ${Product.prototype.imagesConsidered[i].timesShown} times.`;
+    ul.appendChild(li);
+  }
+  div.appendChild(ul);
+  body.appendChild(div);
+}
