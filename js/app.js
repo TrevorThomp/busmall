@@ -34,9 +34,6 @@ var renderNewImages = function(leftIndex, rightIndex, middleIndex){
 };
 
 var pickNewImages = function(){
-  //pick a new image...
-  console.log('pick a new image');
-
   var leftIndex = Math.ceil(Math.random() * NewImage.allImages.length - 1);
 
   do {
@@ -51,12 +48,15 @@ var pickNewImages = function(){
   renderNewImages(leftIndex, rightIndex, middleIndex);
 };
 
+// Number of rounds allowed for user
+var numberOfRounds = 25;
+
 
 // Attach an event listener to the section of the HTML page where the images are going to be displayed.
 var handleClickOnImg = function(event){
   console.log('i am alive');
 
-  if(totalClicks < 26) {
+  if(totalClicks < numberOfRounds) {
     var clickedImage = event.target;
     var id = clickedImage.id;
 
@@ -80,7 +80,7 @@ var handleClickOnImg = function(event){
     }
   }
   totalClicks ++;
-  if(totalClicks === 25) {
+  if(totalClicks === numberOfRounds) {
     imageSectionTag.removeEventListener('click', handleClickOnImg);
     console.log('you have been through 25 rounds of images, thanks!');
   }
@@ -88,8 +88,6 @@ var handleClickOnImg = function(event){
 
 imageSectionTag.addEventListener('click', handleClickOnImg);
 
-// As a user, I would like to control the number of rounds a user is presented with so that I can control the voting session duration.
-// By default, the user should be presented with 25 rounds of voting before ending the session.
 // Keep the number of rounds in a variable to allow the number to be easily changed for debugging and testing purposes.
 // As a user, I would like to view a report of results after all rounds of voting have concluded so that I can evaluate which products were the most popular.
 // Create a prototype property attached to the product object that keeps track of all the products that are currently being considered.
