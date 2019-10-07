@@ -40,7 +40,7 @@ var pickNewImages = function(){
   do {
     var rightIndex = Math.ceil(Math.random() * NewImage.allImages.length - 1);
     var middleIndex = Math.ceil(Math.random() * NewImage.allImages.length - 1);
-  } while(rightIndex === leftIndex && middleIndex === rightIndex && middleIndex === leftIndex);
+  } while((rightIndex === leftIndex) || (rightIndex === middleIndex) || (leftIndex === middleIndex));
 
   leftImgOnThePage = NewImage.allImages[leftIndex];
   rightImgOnThePage = NewImage.allImages[rightIndex];
@@ -108,23 +108,19 @@ new NewImage('bathroom', './img/bathroom.jpg');
 new NewImage('boots', './img/boots.jpg');
 new NewImage('breakfast', './img/breakfast.jpg');
 new NewImage('bubblegum', './img/bubblegum.jpg');
-new NewImage('chair', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
-new NewImage('bag', './img/bag.jpg');
+new NewImage('chair', './img/chair.jpg');
+new NewImage('bag', './img/cthulhu.jpg');
+new NewImage('bag', './img/dog-duck.jpg');
+new NewImage('bag', './img/dragon.jpg');
+new NewImage('bag', './img/pen.jpg');
+new NewImage('bag', './img/pet-sweep.jpg');
+new NewImage('bag', './img/scissors.jpg');
+new NewImage('bag', './img/shark.jpg');
+new NewImage('bag', './img/sweep.png');
+new NewImage('bag', './img/tauntaun.jpg');
+new NewImage('bag', './img/unicorn.jpg');
+new NewImage('bag', './img/usb.gif');
+new NewImage('bag', './img/water-can.jpg');
+new NewImage('bag', './img/wine-glass.jpg');
 
 pickNewImages();
