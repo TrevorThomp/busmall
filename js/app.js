@@ -9,8 +9,9 @@ var totalClicks = 0;
 var rightImgOnThePage = null;
 var leftImgOnThePage = null;
 var middleImgOnThePage = null;
+var numberOfRounds = 25;
 
-
+// Constructor Function
 var Product = function(name, imgUrl) {
   this.name = name;
   this.imgURL = imgUrl;
@@ -23,7 +24,7 @@ Product.allImages= [];
 // Prototype array to hold clicked items
 Product.prototype.imagesConsidered = [];
 
-// Create an algorithm that will randomly generate three unique product images from the images directory and display them side-by-side-by-side in the browser window.
+// Renders random images to DOM
 var renderNewImages = function(leftIndex, rightIndex, middleIndex){
   leftImageTag.src = Product.allImages[leftIndex].imgURL;
   rightImageTag.src = Product.allImages[rightIndex].imgURL;
@@ -46,10 +47,7 @@ var pickNewImages = function(){
   renderNewImages(leftIndex, rightIndex, middleIndex);
 };
 
-// Number of rounds allowed for user
-var numberOfRounds = 25;
-
-// Attach an event listener to the section of the HTML page where the images are going to be displayed.
+// Event Listener tracking clicks and displaying new images upon click
 var handleClickOnImg = function(event){
 
   if(totalClicks < numberOfRounds) {
@@ -116,30 +114,30 @@ pickNewImages();
 function displayResults() {
   var main = document.getElementById('results');
   var div = document.createElement('div');
+  var h2 = document.createElement('h2');
+  h2.textContent = 'Results';
   var ul = document.createElement('ul');
   for (var i = 0; i < Product.allImages.length; i++) {
     var li = document.createElement('li');
     li.textContent = `${Product.allImages[i].name} has ${Product.allImages[i].clicks} votes and was shown ${Product.allImages[i].timesShown} times.`;
     ul.appendChild(li);
   }
+  div.appendChild(h2);
   div.appendChild(ul);
   main.appendChild(div);
 }
 
+// STRETCH - Random generated amount of img tags
+var numberOfImages = Math.floor(Math.random() * 5) + 1;
+
+function appendImages() {
+  var randomIndex = Math.floor(Math.random() * 20) + 1;
+  for (var i = 0; i < numberOfImages; i++) {
+    var randomImages = Product.allImages[randomIndex].imgURL;
+    var stretch = document.getElementById('stretch');
+    var img = document.createElement('img');
+    img.setAttribute('src', randomImages);
+    stretch.appendChild(img);
+  }}
 
 
-// Random Number of Images 
-
-// var numberOfImages = Math.floor(Math.random() * 5) + 1;
-
-// function appendImages() {
-//   var randomIndex = Math.floor(Math.random() * 20) + 1;
-//   for (var i = 0; i < numberOfImages; i++) {
-//     var randomImages = Product.allImages[randomIndex].imgURL;
-//     var stretch = document.getElementById('stretch');
-//     var img = document.createElement('img');
-//     img.setAttribute('src', randomImages);
-//     stretch.appendChild(img);
-//   }}
-
-// appendImages();
