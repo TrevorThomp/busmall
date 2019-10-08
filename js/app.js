@@ -11,6 +11,7 @@ var leftImgOnThePage = null;
 var middleImgOnThePage = null;
 var numberOfRounds = 25;
 
+// Images array
 var images = [
   ['bag', './img/bag.jpg'],
   ['banana', './img/banana.jpg'],
@@ -31,17 +32,8 @@ var images = [
   ['unicorn', './img/unicorn.jpg'],
   ['usb', './img/usb.gif'],
   ['water-can', './img/water-can.jpg'],
-  ['wine-glass', './img/wine-glass.jpg'],
+  ['wine-glass', './img/wine-glass.jpg']
 ];
-
-// Loops through array of images creating functions
-var instantiateImages = function () {
-  for (var i = 0; i < images.length; i++) {
-    var name = images[i][0];
-    var src = images[i][1];
-    var data = new Product(name,src);
-  }
-};
 
 // Constructor Function
 var Product = function(name, imgUrl) {
@@ -49,62 +41,91 @@ var Product = function(name, imgUrl) {
   this.imgURL = imgUrl;
   this.timesShown = 0;
   this.clicks = 0;
+  this.previouslyShown = false;
+  this.ratio = 0;
   Product.allImages.push(this);
 };
+Product.allImages = [];
 
-Product.allImages= [];
+// Loops through array of images creating functions
+(function() {
+  for (var i = 0; i < images.length; i++) {
+    var name = images[i][0];
+    var src = images[i][1];
+    new Product(name, src);
+  }
+})();
 
-console.log(Product.allImages);
-
-// Prototype array to hold clicked items
+// Prototype to track # of clicks
 Product.prototype.clicked = function() {
   this.clicks++;
 };
 
+// Prototype to track timesShown
 Product.prototype.amountShown = function() {
   this.timesShown++;
 };
 
+Product.prototype.conversionRatio = function() {
+  var ratio = this.clicks / this.timesShown;
+  return Math.round(ratio * 100);
+};
+
 // Renders random images to DOM
-var renderNewImages = function(leftIndex, rightIndex, middleIndex){
+var renderNewImages = function(leftIndex, rightIndex, middleIndex) {
   leftImageTag.src = Product.allImages[leftIndex].imgURL;
   rightImageTag.src = Product.allImages[rightIndex].imgURL;
   middleImageTag.src = Product.allImages[middleIndex].imgURL;
 };
 
-// Generate 3 random images that can't be the same
-var pickNewImages = function(){
+// Generate 3 random images that can't be the same or from previous selection
+var pickNewImages = function() {
   var leftIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
+  var middleIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
+  var rightIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
 
-  do {
-    var rightIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
-    var middleIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
-  } while((rightIndex === leftIndex) || (rightIndex === middleIndex) || (leftIndex === middleIndex));
+  while(Product.allImages[leftIndex].previouslyShown) {
+    leftIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
+  }
+
+  while(rightIndex === leftIndex || Product.allImages[rightIndex].previouslyShown) {
+    rightIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
+  }
+
+  while(leftIndex === middleIndex || rightIndex === middleIndex || Product.allImages[middleIndex].previouslyShown) {
+    middleIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
+  }
+
+  for (var i = 0; i < Product.allImages.length; i++) {
+    Product.allImages[i].previouslyShown = false;
+  }
 
   leftImgOnThePage = Product.allImages[leftIndex];
   rightImgOnThePage = Product.allImages[rightIndex];
   middleImgOnThePage = Product.allImages[middleIndex];
 
+  Product.allImages[leftIndex].previouslyShown = true;
+  Product.allImages[rightIndex].previouslyShown = true;
+  Product.allImages[middleIndex].previouslyShown = true;
+
   renderNewImages(leftIndex, rightIndex, middleIndex);
 };
 
 // Event Listener tracking clicks and displaying new images upon click
-var handleClickOnImg = function(event){
-
-  if(totalClicks < numberOfRounds) {
+var handleClickOnImg = function(event) {
+  if (totalClicks < numberOfRounds) {
     var clickedImage = event.target;
     var id = clickedImage.id;
 
-    if(id === 'left_image' || id === 'right_image' || id === 'middle_image'){
-
-      if (id === 'left_image'){
+    if (id === 'left_image' || id === 'right_image' || id === 'middle_image') {
+      if (id === 'left_image') {
         leftImgOnThePage.clicked();
       }
       if (id === 'middle_image') {
         middleImgOnThePage.clicked();
       }
 
-      if (id === 'right_image'){
+      if (id === 'right_image') {
         rightImgOnThePage.clicked();
       }
       leftImgOnThePage.amountShown();
@@ -115,17 +136,19 @@ var handleClickOnImg = function(event){
     }
   }
   totalClicks++;
-  if(totalClicks === numberOfRounds) {
+  if (totalClicks === numberOfRounds) {
     imageSectionTag.removeEventListener('click', handleClickOnImg);
-    displayResults();
     alert('You have seen 25 rounds of images! Thanks for participating.');
+    conversionChartData();
+    displayResults();
+    displayBarChart();
+    displayBarChart2();
   }
 };
 
 imageSectionTag.addEventListener('click', handleClickOnImg);
 
 // Invokes function to pull images from array of images
-instantiateImages();
 pickNewImages();
 
 // Generates results to body
@@ -145,17 +168,138 @@ function displayResults() {
   main.appendChild(div);
 }
 
-// STRETCH - Random generated amount of img tags
-var numberOfImages = Math.floor(Math.random() * 5) + 1;
+// Function that returns conversion ratio
+var conversionChartData = function() {
+  var conversionData = [];
+  for (var i = 0; i < Product.allImages.length; i++) {
+    conversionData.push(Product.allImages[i].conversionRatio());
+  }
+  return conversionData;
+};
 
-function appendImages() {
-  var randomIndex = Math.floor(Math.random() * 20) + 1;
-  for (var i = 0; i < numberOfImages; i++) {
-    var randomImages = Product.allImages[randomIndex].imgURL;
-    var stretch = document.getElementById('stretch');
-    var img = document.createElement('img');
-    img.setAttribute('src', randomImages);
-    stretch.appendChild(img);
-  }}
+// Function to display image labels
+var chartLabels = function(images) {
+  var labelsArr = [];
+  for (var i = 0; i < images.length; i++) {
+    labelsArr.push(images[i].name);
+  }
+  return labelsArr;
+};
 
+// Function to hold # of clicks for chart data
+var chartData = function(images) {
+  var dataArr = [];
+  for (var i = 0; i < images.length; i++) {
+    dataArr.push(images[i].clicks);
+  }
+  return dataArr;
+};
+
+// Function to hold # of timesShown for chart data
+var chartShown = function(images) {
+  var shownData = [];
+  for (var i = 0; i < images.length; i++) {
+    shownData.push(images[i].timesShown);
+  }
+  return shownData;
+};
+
+// Random RGB function
+var randomRGB = function() {
+  var max = 255;
+  var min = 0;
+  var number = function() {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  };
+  var color = `rgb(${number()}, ${number()}, ${number()})`;
+  return color;
+};
+
+// Stores random RGB in array to call on later for chart colors
+var chartColors = function() {
+  var backgroundColor = [];
+  for (var i = 0; i < Product.allImages.length; i++) {
+    backgroundColor.push(randomRGB());
+  }
+  return backgroundColor;
+};
+
+// Chart integration
+function displayBarChart() {
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: chartLabels(Product.allImages),
+      datasets: [
+        {
+          label: '# of Clicks',
+          data: chartData(Product.allImages),
+          backgroundColor: chartColors(),
+          borderColor: chartColors(),
+          borderWidth: 1
+        },
+        {
+          label: '# of Times Shown',
+          data: chartShown(Product.allImages),
+          backgroundColor: chartColors(),
+          borderColor: chartColors(),
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'Number of Clicks'
+            }
+          }
+        ]
+      }
+    }
+  });
+}
+
+// Conversion Ratio Bar Chart
+function displayBarChart2() {
+  var ctx = document.getElementById('conversionChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: chartLabels(Product.allImages),
+      datasets: [
+        {
+          label: 'Clicked Conversion',
+          data: conversionChartData(Product.allImages),
+          backgroundColor: chartColors(),
+          borderColor: chartColors(),
+          borderWidth: 1
+        },
+      ]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            min: 0,
+            max: 100,
+            callback: function(value) {
+              return value + '%';
+            }
+          },
+          scaleLabel: {
+            display: true,
+            labelString: 'Percentage'
+          }
+        }]
+      }
+    }
+  });
+}
 
