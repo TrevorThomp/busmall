@@ -31,3 +31,8 @@ li {
   display: flex;
   justify-content: center;
 }
+
+#chartDiv {
+  width: 500px;
+  height: 500px;
+}

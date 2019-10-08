@@ -10,6 +10,7 @@ var rightImgOnThePage = null;
 var leftImgOnThePage = null;
 var middleImgOnThePage = null;
 var numberOfRounds = 25;
+var previousImages = [];
 
 var images = [
   ['bag', './img/bag.jpg'],
@@ -49,6 +50,7 @@ var Product = function(name, imgUrl) {
   this.imgURL = imgUrl;
   this.timesShown = 0;
   this.clicks = 0;
+  this.previouslyShown = false;
   Product.allImages.push(this);
 };
 
@@ -74,19 +76,31 @@ var renderNewImages = function(leftIndex, rightIndex, middleIndex){
 
 // Generate 3 random images that can't be the same
 var pickNewImages = function(){
-  var leftIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
 
   do {
+    var leftIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
     var rightIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
     var middleIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
   } while((rightIndex === leftIndex) || (rightIndex === middleIndex) || (leftIndex === middleIndex));
 
+
   leftImgOnThePage = Product.allImages[leftIndex];
+  leftImgOnThePage.previouslyShown = true;
   rightImgOnThePage = Product.allImages[rightIndex];
+  rightImgOnThePage.previouslyShown = true;
   middleImgOnThePage = Product.allImages[middleIndex];
+  middleImgOnThePage.previouslyShown = true;
+
+
+
+  previousImages.push(leftImgOnThePage,rightImgOnThePage, middleImgOnThePage);
+  console.log(previousImages);
+
 
   renderNewImages(leftIndex, rightIndex, middleIndex);
 };
+
+
 
 // Event Listener tracking clicks and displaying new images upon click
 var handleClickOnImg = function(event){
@@ -117,8 +131,8 @@ var handleClickOnImg = function(event){
   totalClicks++;
   if(totalClicks === numberOfRounds) {
     imageSectionTag.removeEventListener('click', handleClickOnImg);
-    displayResults();
     alert('You have seen 25 rounds of images! Thanks for participating.');
+    displayResults();
   }
 };
 
@@ -159,3 +173,87 @@ function appendImages() {
   }}
 
 
+var genLabels = function(images) {
+  var labelsArr = [];
+  for (var i=0; i < images.length; i++){
+    labelsArr.push(images[i].name);
+  }
+  console.log(labelsArr);
+  return labelsArr;
+};
+
+var genData = function(images) {
+  var dataArr = [];
+  for (var i=0; i < images.length; i++){
+    dataArr.push(images[i].clicks);
+  }
+  console.log(dataArr);
+  return dataArr;
+};
+
+
+// Chart integration
+function displayChart() {
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: genLabels(Product.allImages),
+      datasets: [{
+        label: '# of Votes',
+        data: genData(Product.allImages),
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+        },
+        {
+          label: '# of Votes',
+          data: genData(Product.allImages),
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+          }
+      ]
+    },
+    options: {
+    scales: {
+              yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                   
+                }
+            }]
+        }
+    }
+});
+};
+
+displayChart();
