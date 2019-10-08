@@ -11,6 +11,7 @@ var leftImgOnThePage = null;
 var middleImgOnThePage = null;
 var numberOfRounds = 25;
 
+// Images array
 var images = [
   ['bag', './img/bag.jpg'],
   ['banana', './img/banana.jpg'],
@@ -55,11 +56,12 @@ Product.allImages = [];
   }
 })();
 
-// Prototype array to hold clicked items
+// Prototype to track # of clicks
 Product.prototype.clicked = function() {
   this.clicks++;
 };
 
+// Prototype to track timesShown
 Product.prototype.amountShown = function() {
   this.timesShown++;
 };
@@ -147,7 +149,6 @@ var handleClickOnImg = function(event) {
 imageSectionTag.addEventListener('click', handleClickOnImg);
 
 // Invokes function to pull images from array of images
-// instantiateImages();
 pickNewImages();
 
 // Generates results to body
@@ -167,15 +168,16 @@ function displayResults() {
   main.appendChild(div);
 }
 
+// Function that returns conversion ratio
 var conversionChartData = function() {
   var conversionData = [];
   for (var i = 0; i < Product.allImages.length; i++) {
     conversionData.push(Product.allImages[i].conversionRatio());
   }
-  console.log(conversionData);
   return conversionData;
 };
 
+// Function to display image labels
 var chartLabels = function(images) {
   var labelsArr = [];
   for (var i = 0; i < images.length; i++) {
@@ -184,6 +186,7 @@ var chartLabels = function(images) {
   return labelsArr;
 };
 
+// Function to hold # of clicks for chart data
 var chartData = function(images) {
   var dataArr = [];
   for (var i = 0; i < images.length; i++) {
@@ -192,6 +195,7 @@ var chartData = function(images) {
   return dataArr;
 };
 
+// Function to hold # of timesShown for chart data
 var chartShown = function(images) {
   var shownData = [];
   for (var i = 0; i < images.length; i++) {
@@ -200,7 +204,7 @@ var chartShown = function(images) {
   return shownData;
 };
 
-
+// Random RGB function
 var randomRGB = function() {
   var max = 255;
   var min = 0;
@@ -211,6 +215,7 @@ var randomRGB = function() {
   return color;
 };
 
+// Stores random RGB in array to call on later for chart colors
 var chartColors = function() {
   var backgroundColor = [];
   for (var i = 0; i < Product.allImages.length; i++) {
@@ -261,6 +266,7 @@ function displayBarChart() {
   });
 }
 
+// Conversion Ratio Bar Chart
 function displayBarChart2() {
   var ctx = document.getElementById('conversionChart').getContext('2d');
   var myChart = new Chart(ctx, {
