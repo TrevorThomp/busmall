@@ -41,6 +41,7 @@ var Product = function(name, imgUrl) {
   this.timesShown = 0;
   this.clicks = 0;
   this.previouslyShown = false;
+  this.ratio = 0;
   Product.allImages.push(this);
 };
 Product.allImages = [];
@@ -65,7 +66,7 @@ Product.prototype.amountShown = function() {
 
 Product.prototype.conversionRatio = function() {
   var ratio = this.clicks / this.timesShown;
-  return Math.floor(ratio * 100) + '%';
+  return Math.round(ratio * 100);
 };
 
 // Renders random images to DOM
@@ -129,10 +130,6 @@ var handleClickOnImg = function(event) {
       rightImgOnThePage.amountShown();
       middleImgOnThePage.amountShown();
 
-
-      // leftImgOnThePage.conversionRatio();
-      // middleImgOnThePage.conversionRatio();
-      // rightImgOnThePage.conversionRatio();
       pickNewImages();
     }
   }
@@ -140,12 +137,10 @@ var handleClickOnImg = function(event) {
   if (totalClicks === numberOfRounds) {
     imageSectionTag.removeEventListener('click', handleClickOnImg);
     alert('You have seen 25 rounds of images! Thanks for participating.');
-    for (var i = 0; i < Product.allImages.length; i++) {
-      var ratio = Product.allImages[i].conversionRatio();
-      console.log(ratio);
-    }
+    conversionChartData();
     displayResults();
-    displayChart();
+    displayBarChart();
+    displayBarChart2();
   }
 };
 
@@ -172,9 +167,16 @@ function displayResults() {
   main.appendChild(div);
 }
 
+var conversionChartData = function() {
+  var conversionData = [];
+  for (var i = 0; i < Product.allImages.length; i++) {
+    conversionData.push(Product.allImages[i].conversionRatio());
+  }
+  console.log(conversionData);
+  return conversionData;
+};
 
-
-var genLabels = function(images) {
+var chartLabels = function(images) {
   var labelsArr = [];
   for (var i = 0; i < images.length; i++) {
     labelsArr.push(images[i].name);
@@ -182,7 +184,7 @@ var genLabels = function(images) {
   return labelsArr;
 };
 
-var genData = function(images) {
+var chartData = function(images) {
   var dataArr = [];
   for (var i = 0; i < images.length; i++) {
     dataArr.push(images[i].clicks);
@@ -190,13 +192,14 @@ var genData = function(images) {
   return dataArr;
 };
 
-var genShown = function(images) {
+var chartShown = function(images) {
   var shownData = [];
   for (var i = 0; i < images.length; i++) {
     shownData.push(images[i].timesShown);
   }
   return shownData;
 };
+
 
 var randomRGB = function() {
   var max = 255;
@@ -208,9 +211,7 @@ var randomRGB = function() {
   return color;
 };
 
-console.log(randomRGB());
-
-var genColors = function() {
+var chartColors = function() {
   var backgroundColor = [];
   for (var i = 0; i < Product.allImages.length; i++) {
     backgroundColor.push(randomRGB());
@@ -219,25 +220,25 @@ var genColors = function() {
 };
 
 // Chart integration
-function displayChart() {
+function displayBarChart() {
   var ctx = document.getElementById('myChart').getContext('2d');
   var myChart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: genLabels(Product.allImages),
+      labels: chartLabels(Product.allImages),
       datasets: [
         {
           label: '# of Clicks',
-          data: genData(Product.allImages),
-          backgroundColor: genColors(),
-          borderColor: genColors(),
+          data: chartData(Product.allImages),
+          backgroundColor: chartColors(),
+          borderColor: chartColors(),
           borderWidth: 1
         },
         {
           label: '# of Times Shown',
-          data: genShown(Product.allImages),
-          backgroundColor: genColors(),
-          borderColor: genColors(),
+          data: chartShown(Product.allImages),
+          backgroundColor: chartColors(),
+          borderColor: chartColors(),
           borderWidth: 1
         }
       ]
@@ -248,6 +249,10 @@ function displayChart() {
           {
             ticks: {
               beginAtZero: true
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'Number of Clicks'
             }
           }
         ]
@@ -255,3 +260,40 @@ function displayChart() {
     }
   });
 }
+
+function displayBarChart2() {
+  var ctx = document.getElementById('conversionChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: chartLabels(Product.allImages),
+      datasets: [
+        {
+          label: 'Clicked Conversion',
+          data: conversionChartData(Product.allImages),
+          backgroundColor: chartColors(),
+          borderColor: chartColors(),
+          borderWidth: 1
+        },
+      ]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            min: 0,
+            max: 100,
+            callback: function(value) {
+              return value + '%';
+            }
+          },
+          scaleLabel: {
+            display: true,
+            labelString: 'Percentage'
+          }
+        }]
+      }
+    }
+  });
+}
+
