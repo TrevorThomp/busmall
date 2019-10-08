@@ -11,6 +11,38 @@ var leftImgOnThePage = null;
 var middleImgOnThePage = null;
 var numberOfRounds = 25;
 
+var images = [
+  ['bag', './img/bag.jpg'],
+  ['banana', './img/banana.jpg'],
+  ['bathroom', './img/bathroom.jpg'],
+  ['boots', './img/boots.jpg'],
+  ['breakfast', './img/breakfast.jpg'],
+  ['bubblegum', './img/bubblegum.jpg'],
+  ['chair', './img/chair.jpg'],
+  ['cthulhu', './img/cthulhu.jpg'],
+  ['dog-duck', './img/dog-duck.jpg'],
+  ['dragon', './img/dragon.jpg'],
+  ['pen', './img/pen.jpg'],
+  ['pet-sweep', './img/pet-sweep.jpg'],
+  ['scissors', './img/scissors.jpg'],
+  ['shark', './img/shark.jpg'],
+  ['sweep', './img/sweep.png'],
+  ['tauntaun', './img/tauntaun.jpg'],
+  ['unicorn', './img/unicorn.jpg'],
+  ['usb', './img/usb.gif'],
+  ['water-can', './img/water-can.jpg'],
+  ['wine-glass', './img/wine-glass.jpg'],
+];
+
+// Loops through array of images creating functions
+var instantiateImages = function () {
+  for (var i = 0; i < images.length; i++) {
+    var name = images[i][0];
+    var src = images[i][1];
+    new Product(name,src);
+  }
+};
+
 // Constructor Function
 var Product = function(name, imgUrl) {
   this.name = name;
@@ -80,34 +112,14 @@ var handleClickOnImg = function(event){
   if(totalClicks === numberOfRounds) {
     imageSectionTag.removeEventListener('click', handleClickOnImg);
     displayResults();
-    console.log('you have been through 25 rounds of images, thanks!');
+    alert('You have seen 25 rounds of images! Thanks for participating.');
   }
 };
 
 imageSectionTag.addEventListener('click', handleClickOnImg);
 
-// Images to be displayed
-new Product('bag', './img/bag.jpg');
-new Product('banana', './img/banana.jpg');
-new Product('bathroom', './img/bathroom.jpg');
-new Product('boots', './img/boots.jpg');
-new Product('breakfast', './img/breakfast.jpg');
-new Product('bubblegum', './img/bubblegum.jpg');
-new Product('chair', './img/chair.jpg');
-new Product('cthulhu', './img/cthulhu.jpg');
-new Product('dog-duck', './img/dog-duck.jpg');
-new Product('dragon', './img/dragon.jpg');
-new Product('pen', './img/pen.jpg');
-new Product('pet-sweep', './img/pet-sweep.jpg');
-new Product('scissors', './img/scissors.jpg');
-new Product('shark', './img/shark.jpg');
-new Product('sweep', './img/sweep.png');
-new Product('tauntaun', './img/tauntaun.jpg');
-new Product('unicorn', './img/unicorn.jpg');
-new Product('usb', './img/usb.gif');
-new Product('water-can', './img/water-can.jpg');
-new Product('wine-glass', './img/wine-glass.jpg');
-
+// Invokes function to pull images from array of images
+instantiateImages();
 pickNewImages();
 
 // Generates results to body
