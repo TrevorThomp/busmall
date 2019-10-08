@@ -39,7 +39,7 @@ var instantiateImages = function () {
   for (var i = 0; i < images.length; i++) {
     var name = images[i][0];
     var src = images[i][1];
-    new Product(name,src);
+    var data = new Product(name,src);
   }
 };
 
@@ -51,10 +51,19 @@ var Product = function(name, imgUrl) {
   this.clicks = 0;
   Product.allImages.push(this);
 };
+
 Product.allImages= [];
 
+console.log(Product.allImages);
+
 // Prototype array to hold clicked items
-Product.prototype.imagesConsidered = [];
+Product.prototype.clicked = function() {
+  this.clicks++;
+};
+
+Product.prototype.amountShown = function() {
+  this.timesShown++;
+};
 
 // Renders random images to DOM
 var renderNewImages = function(leftIndex, rightIndex, middleIndex){
@@ -89,21 +98,18 @@ var handleClickOnImg = function(event){
     if(id === 'left_image' || id === 'right_image' || id === 'middle_image'){
 
       if (id === 'left_image'){
-        leftImgOnThePage.clicks++;
-        Product.prototype.imagesConsidered.push(leftImgOnThePage);
+        leftImgOnThePage.clicked();
       }
       if (id === 'middle_image') {
-        middleImgOnThePage.clicks++;
-        Product.prototype.imagesConsidered.push(leftImgOnThePage);
+        middleImgOnThePage.clicked();
       }
 
       if (id === 'right_image'){
-        rightImgOnThePage.clicks++;
-        Product.prototype.imagesConsidered.push(leftImgOnThePage);
+        rightImgOnThePage.clicked();
       }
-      leftImgOnThePage.timesShown++;
-      rightImgOnThePage.timesShown++;
-      middleImgOnThePage.timesShown++;
+      leftImgOnThePage.amountShown();
+      rightImgOnThePage.amountShown();
+      middleImgOnThePage.amountShown();
 
       pickNewImages();
     }
