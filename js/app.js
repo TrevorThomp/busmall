@@ -10,7 +10,6 @@ var rightImgOnThePage = null;
 var leftImgOnThePage = null;
 var middleImgOnThePage = null;
 var numberOfRounds = 25;
-var previousImages = [];
 
 var images = [
   ['bag', './img/bag.jpg'],
@@ -74,27 +73,35 @@ var renderNewImages = function(leftIndex, rightIndex, middleIndex) {
   middleImageTag.src = Product.allImages[middleIndex].imgURL;
 };
 
-// Generate 3 random images that can't be the same
+// Generate 3 random images that can't be the same or from previous selection
 var pickNewImages = function() {
-  do {
-    var leftIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
-    var rightIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
-    var middleIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
-  } while (
-    rightIndex === leftIndex ||
-    rightIndex === middleIndex ||
-    leftIndex === middleIndex
-  );
+  var leftIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
+  var middleIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
+  var rightIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
+
+  while(Product.allImages[leftIndex].previouslyShown) {
+    leftIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
+  }
+
+  while(rightIndex === leftIndex || Product.allImages[rightIndex].previouslyShown) {
+    rightIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
+  }
+
+  while(leftIndex === middleIndex || rightIndex === middleIndex || Product.allImages[middleIndex].previouslyShown) {
+    middleIndex = Math.ceil(Math.random() * Product.allImages.length - 1);
+  }
+
+  for (var i = 0; i < Product.allImages.length; i++) {
+    Product.allImages[i].previouslyShown = false;
+  }
 
   leftImgOnThePage = Product.allImages[leftIndex];
-  leftImgOnThePage.previouslyShown = true;
   rightImgOnThePage = Product.allImages[rightIndex];
-  rightImgOnThePage.previouslyShown = true;
   middleImgOnThePage = Product.allImages[middleIndex];
-  middleImgOnThePage.previouslyShown = true;
 
-  previousImages.push(leftImgOnThePage, rightImgOnThePage, middleImgOnThePage);
-  console.log(previousImages);
+  Product.allImages[leftIndex].previouslyShown = true;
+  Product.allImages[rightIndex].previouslyShown = true;
+  Product.allImages[middleIndex].previouslyShown = true;
 
   renderNewImages(leftIndex, rightIndex, middleIndex);
 };
@@ -174,7 +181,6 @@ var genLabels = function(images) {
   for (var i = 0; i < images.length; i++) {
     labelsArr.push(images[i].name);
   }
-  console.log(labelsArr);
   return labelsArr;
 };
 
@@ -183,7 +189,6 @@ var genData = function(images) {
   for (var i = 0; i < images.length; i++) {
     dataArr.push(images[i].clicks);
   }
-  console.log(dataArr);
   return dataArr;
 };
 
@@ -192,7 +197,6 @@ var genShown = function(images) {
   for (var i = 0; i < images.length; i++) {
     shownData.push(images[i].timesShown);
   }
-  console.log(shownData);
   return shownData;
 };
 
