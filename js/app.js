@@ -42,11 +42,6 @@ var Product = function(name, imgUrl) {
   this.timesShown = 0;
   this.clicks = 0;
   this.previouslyShown = false;
-  this.ratio = function () {
-    var mathRatio = this.clicks / this.timesShown;
-    return Math.floor(mathRatio * 100);
-  };
-
   Product.allImages.push(this);
 
 };
@@ -61,12 +56,16 @@ function getPreviousData() {
   var localData = localStorage.getItem('data');
   var productData = JSON.parse(localData);
 
-  console.log(productData);
   if (productData !== null) {
     Product.allImages = productData;
   }
-
 }
+
+// Prototype method for conversion Chart *NOT ACTIVE WITH JSON*
+Product.prototype.conversionRatio = function() {
+  var ratio = this.clicks / this.timesShown;
+  return Math.floor(ratio * 100);
+};
 
 // Loops through array of images creating functions
 (function() {
@@ -77,12 +76,6 @@ function getPreviousData() {
   }
 })();
 
-
-// Product.prototype.conversionRatio = function() {
-//   var ratio = this.ratio;
-//   var math = this.clicks / this.timesShown;
-//   ratio = Math.floor(math * 100);
-// };
 
 // Renders random images to DOM
 var renderNewImages = function(leftIndex, rightIndex, middleIndex) {
@@ -153,10 +146,8 @@ var handleClickOnImg = function(event) {
     imageSectionTag.removeEventListener('click', handleClickOnImg);
     alert('You have seen 25 rounds of images! Thanks for participating.');
     updateLocalStorage();
-    // conversionChartData();
     displayResults();
     displayBarChart();
-    // displayBarChart2();
   }
 };
 
@@ -186,13 +177,13 @@ function displayResults() {
 }
 
 // Function that returns conversion ratio
-// var conversionChartData = function() {
-//   var conversionData = [];
-//   for (var i = 0; i < Product.allImages.length; i++) {
-//     conversionData.push(Product.allImages[i].ratio());
-//   }
-//   return conversionData;
-// };
+var conversionChartData = function() {
+  var conversionData = [];
+  for (var i = 0; i < Product.allImages.length; i++) {
+    conversionData.push(Product.allImages[i].convert);
+  }
+  return conversionData;
+};
 
 // Function to display image labels
 var chartLabels = function(images) {
@@ -284,40 +275,40 @@ function displayBarChart() {
 }
 
 // Conversion Ratio Bar Chart
-// function displayBarChart2() {
-//   var ctx = document.getElementById('conversionChart').getContext('2d');
-//   var myChart = new Chart(ctx, {
-//     type: 'bar',
-//     data: {
-//       labels: chartLabels(Product.allImages),
-//       datasets: [
-//         {
-//           label: 'Clicked Conversion',
-//           data: conversionChartData(Product.allImages),
-//           backgroundColor: chartColors(),
-//           borderColor: chartColors(),
-//           borderWidth: 1
-//         },
-//       ]
-//     },
-//     options: {
-//       scales: {
-//         yAxes: [{
-//           ticks: {
-//             min: 0,
-//             max: 100,
-//             callback: function(value) {
-//               return value + '%';
-//             }
-//           },
-//           scaleLabel: {
-//             display: true,
-//             labelString: 'Percentage'
-//           }
-//         }]
-//       }
-//     }
-//   });
-// }
+function displayBarChart2() {
+  var ctx = document.getElementById('conversionChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: chartLabels(Product.allImages),
+      datasets: [
+        {
+          label: 'Clicked Conversion',
+          data: conversionChartData(Product.allImages),
+          backgroundColor: chartColors(),
+          borderColor: chartColors(),
+          borderWidth: 1
+        },
+      ]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            min: 0,
+            max: 100,
+            callback: function(value) {
+              return value + '%';
+            }
+          },
+          scaleLabel: {
+            display: true,
+            labelString: 'Percentage'
+          }
+        }]
+      }
+    }
+  });
+}
 
 getPreviousData();
