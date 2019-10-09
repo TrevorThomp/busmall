@@ -42,10 +42,30 @@ var Product = function(name, imgUrl) {
   this.timesShown = 0;
   this.clicks = 0;
   this.previouslyShown = false;
-  this.ratio = 0;
   Product.allImages.push(this);
+
 };
 Product.allImages = [];
+
+function updateLocalStorage() {
+  var jsonString = JSON.stringify(Product.allImages);
+  localStorage.setItem('data', jsonString);
+}
+
+function getPreviousData() {
+  var localData = localStorage.getItem('data');
+  var productData = JSON.parse(localData);
+
+  if (productData !== null) {
+    Product.allImages = productData;
+  }
+}
+
+// Prototype method for conversion Chart *NOT ACTIVE WITH JSON*
+Product.prototype.conversionRatio = function() {
+  var ratio = this.clicks / this.timesShown;
+  return Math.floor(ratio * 100);
+};
 
 // Loops through array of images creating functions
 (function() {
@@ -56,20 +76,6 @@ Product.allImages = [];
   }
 })();
 
-// Prototype to track # of clicks
-Product.prototype.clicked = function() {
-  this.clicks++;
-};
-
-// Prototype to track timesShown
-Product.prototype.amountShown = function() {
-  this.timesShown++;
-};
-
-Product.prototype.conversionRatio = function() {
-  var ratio = this.clicks / this.timesShown;
-  return Math.round(ratio * 100);
-};
 
 // Renders random images to DOM
 var renderNewImages = function(leftIndex, rightIndex, middleIndex) {
@@ -119,18 +125,18 @@ var handleClickOnImg = function(event) {
 
     if (id === 'left_image' || id === 'right_image' || id === 'middle_image') {
       if (id === 'left_image') {
-        leftImgOnThePage.clicked();
+        leftImgOnThePage.clicks++;
       }
       if (id === 'middle_image') {
-        middleImgOnThePage.clicked();
+        middleImgOnThePage.clicks++;
       }
 
       if (id === 'right_image') {
-        rightImgOnThePage.clicked();
+        rightImgOnThePage.clicks++;
       }
-      leftImgOnThePage.amountShown();
-      rightImgOnThePage.amountShown();
-      middleImgOnThePage.amountShown();
+      leftImgOnThePage.timesShown++;
+      rightImgOnThePage.timesShown++;
+      middleImgOnThePage.timesShown++;
 
       pickNewImages();
     }
@@ -139,10 +145,9 @@ var handleClickOnImg = function(event) {
   if (totalClicks === numberOfRounds) {
     imageSectionTag.removeEventListener('click', handleClickOnImg);
     alert('You have seen 25 rounds of images! Thanks for participating.');
-    conversionChartData();
+    updateLocalStorage();
     displayResults();
     displayBarChart();
-    displayBarChart2();
   }
 };
 
@@ -153,11 +158,14 @@ pickNewImages();
 
 // Generates results to body
 function displayResults() {
+
   var main = document.getElementById('results');
   var div = document.createElement('div');
   var h2 = document.createElement('h2');
   h2.textContent = 'Results';
   var ul = document.createElement('ul');
+  ul.setAttribute('id', 'listData');
+  ul.textContent = '';
   for (var i = 0; i < Product.allImages.length; i++) {
     var li = document.createElement('li');
     li.textContent = `${Product.allImages[i].name} has ${Product.allImages[i].clicks} votes and was shown ${Product.allImages[i].timesShown} times.`;
@@ -172,7 +180,7 @@ function displayResults() {
 var conversionChartData = function() {
   var conversionData = [];
   for (var i = 0; i < Product.allImages.length; i++) {
-    conversionData.push(Product.allImages[i].conversionRatio());
+    conversionData.push(Product.allImages[i].convert);
   }
   return conversionData;
 };
@@ -303,3 +311,4 @@ function displayBarChart2() {
   });
 }
 
+getPreviousData();

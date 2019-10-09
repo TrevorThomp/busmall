@@ -1,7 +1,9 @@
 img {
-  width: 25%;
+  max-width: 25%;
+  max-height: 280px;
   border-radius: 8px;
   border: 1px solid slategrey;
+  margin: 0 40px;
 }
 
 h2 {
