@@ -42,10 +42,31 @@ var Product = function(name, imgUrl) {
   this.timesShown = 0;
   this.clicks = 0;
   this.previouslyShown = false;
-  this.ratio = 0;
+  this.ratio = function () {
+    var mathRatio = this.clicks / this.timesShown;
+    return Math.floor(mathRatio * 100);
+  };
+
   Product.allImages.push(this);
+
 };
 Product.allImages = [];
+
+function updateLocalStorage() {
+  var jsonString = JSON.stringify(Product.allImages);
+  localStorage.setItem('data', jsonString);
+}
+
+function getPreviousData() {
+  var localData = localStorage.getItem('data');
+  var productData = JSON.parse(localData);
+
+  console.log(productData);
+  if (productData !== null) {
+    Product.allImages = productData;
+  }
+
+}
 
 // Loops through array of images creating functions
 (function() {
@@ -56,20 +77,12 @@ Product.allImages = [];
   }
 })();
 
-// Prototype to track # of clicks
-Product.prototype.clicked = function() {
-  this.clicks++;
-};
 
-// Prototype to track timesShown
-Product.prototype.amountShown = function() {
-  this.timesShown++;
-};
-
-Product.prototype.conversionRatio = function() {
-  var ratio = this.clicks / this.timesShown;
-  return Math.round(ratio * 100);
-};
+// Product.prototype.conversionRatio = function() {
+//   var ratio = this.ratio;
+//   var math = this.clicks / this.timesShown;
+//   ratio = Math.floor(math * 100);
+// };
 
 // Renders random images to DOM
 var renderNewImages = function(leftIndex, rightIndex, middleIndex) {
@@ -119,18 +132,18 @@ var handleClickOnImg = function(event) {
 
     if (id === 'left_image' || id === 'right_image' || id === 'middle_image') {
       if (id === 'left_image') {
-        leftImgOnThePage.clicked();
+        leftImgOnThePage.clicks++;
       }
       if (id === 'middle_image') {
-        middleImgOnThePage.clicked();
+        middleImgOnThePage.clicks++;
       }
 
       if (id === 'right_image') {
-        rightImgOnThePage.clicked();
+        rightImgOnThePage.clicks++;
       }
-      leftImgOnThePage.amountShown();
-      rightImgOnThePage.amountShown();
-      middleImgOnThePage.amountShown();
+      leftImgOnThePage.timesShown++;
+      rightImgOnThePage.timesShown++;
+      middleImgOnThePage.timesShown++;
 
       pickNewImages();
     }
@@ -139,10 +152,11 @@ var handleClickOnImg = function(event) {
   if (totalClicks === numberOfRounds) {
     imageSectionTag.removeEventListener('click', handleClickOnImg);
     alert('You have seen 25 rounds of images! Thanks for participating.');
-    conversionChartData();
+    updateLocalStorage();
+    // conversionChartData();
     displayResults();
     displayBarChart();
-    displayBarChart2();
+    // displayBarChart2();
   }
 };
 
@@ -153,11 +167,14 @@ pickNewImages();
 
 // Generates results to body
 function displayResults() {
+
   var main = document.getElementById('results');
   var div = document.createElement('div');
   var h2 = document.createElement('h2');
   h2.textContent = 'Results';
   var ul = document.createElement('ul');
+  ul.setAttribute('id', 'listData');
+  ul.textContent = '';
   for (var i = 0; i < Product.allImages.length; i++) {
     var li = document.createElement('li');
     li.textContent = `${Product.allImages[i].name} has ${Product.allImages[i].clicks} votes and was shown ${Product.allImages[i].timesShown} times.`;
@@ -169,13 +186,13 @@ function displayResults() {
 }
 
 // Function that returns conversion ratio
-var conversionChartData = function() {
-  var conversionData = [];
-  for (var i = 0; i < Product.allImages.length; i++) {
-    conversionData.push(Product.allImages[i].conversionRatio());
-  }
-  return conversionData;
-};
+// var conversionChartData = function() {
+//   var conversionData = [];
+//   for (var i = 0; i < Product.allImages.length; i++) {
+//     conversionData.push(Product.allImages[i].ratio());
+//   }
+//   return conversionData;
+// };
 
 // Function to display image labels
 var chartLabels = function(images) {
@@ -267,39 +284,40 @@ function displayBarChart() {
 }
 
 // Conversion Ratio Bar Chart
-function displayBarChart2() {
-  var ctx = document.getElementById('conversionChart').getContext('2d');
-  var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: chartLabels(Product.allImages),
-      datasets: [
-        {
-          label: 'Clicked Conversion',
-          data: conversionChartData(Product.allImages),
-          backgroundColor: chartColors(),
-          borderColor: chartColors(),
-          borderWidth: 1
-        },
-      ]
-    },
-    options: {
-      scales: {
-        yAxes: [{
-          ticks: {
-            min: 0,
-            max: 100,
-            callback: function(value) {
-              return value + '%';
-            }
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Percentage'
-          }
-        }]
-      }
-    }
-  });
-}
+// function displayBarChart2() {
+//   var ctx = document.getElementById('conversionChart').getContext('2d');
+//   var myChart = new Chart(ctx, {
+//     type: 'bar',
+//     data: {
+//       labels: chartLabels(Product.allImages),
+//       datasets: [
+//         {
+//           label: 'Clicked Conversion',
+//           data: conversionChartData(Product.allImages),
+//           backgroundColor: chartColors(),
+//           borderColor: chartColors(),
+//           borderWidth: 1
+//         },
+//       ]
+//     },
+//     options: {
+//       scales: {
+//         yAxes: [{
+//           ticks: {
+//             min: 0,
+//             max: 100,
+//             callback: function(value) {
+//               return value + '%';
+//             }
+//           },
+//           scaleLabel: {
+//             display: true,
+//             labelString: 'Percentage'
+//           }
+//         }]
+//       }
+//     }
+//   });
+// }
 
+getPreviousData();
