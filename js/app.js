@@ -10,6 +10,7 @@ var rightImgOnThePage = null;
 var leftImgOnThePage = null;
 var middleImgOnThePage = null;
 var numberOfRounds = 25;
+var product;
 
 // Images array
 var images = [
@@ -47,11 +48,13 @@ var Product = function(name, imgUrl) {
 };
 Product.allImages = [];
 
+// Store data into local Storage
 function updateLocalStorage() {
   var jsonString = JSON.stringify(Product.allImages);
   localStorage.setItem('data', jsonString);
 }
 
+// Retrieve data from local storage
 function getPreviousData() {
   var localData = localStorage.getItem('data');
   var productData = JSON.parse(localData);
@@ -176,15 +179,6 @@ function displayResults() {
   main.appendChild(div);
 }
 
-// Function that returns conversion ratio
-var conversionChartData = function() {
-  var conversionData = [];
-  for (var i = 0; i < Product.allImages.length; i++) {
-    conversionData.push(Product.allImages[i].convert);
-  }
-  return conversionData;
-};
-
 // Function to display image labels
 var chartLabels = function(images) {
   var labelsArr = [];
@@ -269,43 +263,6 @@ function displayBarChart() {
             }
           }
         ]
-      }
-    }
-  });
-}
-
-// Conversion Ratio Bar Chart
-function displayBarChart2() {
-  var ctx = document.getElementById('conversionChart').getContext('2d');
-  var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: chartLabels(Product.allImages),
-      datasets: [
-        {
-          label: 'Clicked Conversion',
-          data: conversionChartData(Product.allImages),
-          backgroundColor: chartColors(),
-          borderColor: chartColors(),
-          borderWidth: 1
-        },
-      ]
-    },
-    options: {
-      scales: {
-        yAxes: [{
-          ticks: {
-            min: 0,
-            max: 100,
-            callback: function(value) {
-              return value + '%';
-            }
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Percentage'
-          }
-        }]
       }
     }
   });
