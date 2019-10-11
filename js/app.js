@@ -10,7 +10,6 @@ var rightImgOnThePage = null;
 var leftImgOnThePage = null;
 var middleImgOnThePage = null;
 var numberOfRounds = 25;
-var product;
 
 // Images array
 var images = [
